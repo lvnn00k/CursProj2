@@ -16,3 +16,10 @@
     |One        |100   |22  |
     |Two        |200   |0   |
     |Three      |300   |22  |
+
+# Лабораторная работа №3
+
+## Сборка и запуск java-приложения 
+
+    javac -d out java/*.java
+    java -cp out receipt.Main
