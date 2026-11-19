@@ -3,12 +3,49 @@
 namespace receipt 
 {
 
-Receipt::~Receipt() 
+BaseReceipt::~BaseReceipt() 
 {
-    std::cout << "Чек удален" << std::endl;
+    std::cout << "~BaseReceipt(): Чек удален" << std::endl;
 }
 
-void Receipt::AddNewItem() 
+BaseReceipt::BaseReceipt()
+{
+    std::cout << "BaseReceipt(): Чек создан" << std::endl;
+}
+
+Receipt::~Receipt()
+{
+    std::cout << "~Receipt(): Чек удален" << std::endl;
+}
+
+Receipt::Receipt()
+{
+    std::cout << "Receipt(): Чек создан" << std::endl;
+}
+
+
+ReturnReceipt::ReturnReceipt(double sum)
+    : m_sum { sum }
+{}
+
+void ReturnReceipt::Show()
+{
+    std::cout << "Возврат прихода:\t" << m_sum <<"\n";
+}
+
+
+double Receipt::GetSum() const
+{
+    double sum = 0;
+    for (int i = 0; i < m_arraySize; i++)
+    {
+        sum += m_items[i].GetSum();
+    } 
+
+    return sum;
+}
+
+void Receipt::AddNewItem()
 {   
     int number, count;
     while (1) 
@@ -84,7 +121,7 @@ void Receipt::DeleteItem()
 
 }
 
-void Receipt::RemoveElementFromItemsArray(int index) 
+void Receipt::RemoveElementFromItemsArray(int index)
 {
     
     for (int i = index; i < m_arraySize-1; i++)
@@ -104,7 +141,8 @@ void Receipt::RemoveElementFromItemsArray(int index)
 
 }
 
-void Receipt::ShowAll() {
+void Receipt::Show()
+{
     if (IsReceiptEmpty()) 
     {
         return;
@@ -118,7 +156,8 @@ void Receipt::ShowAll() {
     }
 }
 
-bool Receipt::IsReceiptEmpty() {
+bool Receipt::IsReceiptEmpty()
+{
     if (m_arraySize == 0) 
     { 
         std::cout << "Чек пуст" << std::endl;
