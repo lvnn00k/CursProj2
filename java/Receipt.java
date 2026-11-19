@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-class Receipt implements AutoCloseable {
+public final class Receipt extends BaseReceipt {
     private List<ReceiptItem> items = new ArrayList<>();
+
     private boolean isReceiptEmpty() 
     {
         if (items.isEmpty()) {
@@ -15,6 +16,7 @@ class Receipt implements AutoCloseable {
         return false;
     }
 
+    @Override 
     public void addNewItem()
     {
         int number, count;
@@ -44,6 +46,7 @@ class Receipt implements AutoCloseable {
         items.add(new ReceiptItem(Products.array.get(number-1), count));
     }
 
+    @Override 
     public void deleteItem() 
     {
         if (isReceiptEmpty()) return;
@@ -63,10 +66,17 @@ class Receipt implements AutoCloseable {
 
         ReceiptItem item = items.remove(number-1);
         item.close();
-        
+
     }
 
-    public void showAll()
+    @Override 
+    public int getTypeID() 
+    {
+        return 1;
+    }
+        
+    @Override 
+    public void show()
     {
         if (isReceiptEmpty()) return;
 
@@ -77,17 +87,16 @@ class Receipt implements AutoCloseable {
         }
     }
 
-    
-
-    @Override
-    public void close() 
+    @Override 
+    public double getSum()
     {
-        System.out.println("Чек удален");
-    }
+        double sum = 0;
+        for (ReceiptItem item : items)
+        {
+            sum += item.getSum();
+        } 
 
-    public String toString()
-    {
-        return "Чек создан!";
+        return sum;
     }
 
 }
