@@ -1,83 +1,82 @@
 #include <iostream>
-#include "receipt.hpp"
-using namespace receipt;
+#include "shift.hpp"
 
-enum ItemAction {
-    AddItem = 1, 
-    DeleteItem = 2, 
-    Show = 3, 
-    BackToReceipt = 4
+using namespace shift;
+
+enum ShiftActions 
+{
+    CreateReceipt = 1, 
+    PrintReport = 2, 
+    BackTo = 3
 };
 
-enum ReceiptAction {
-    NewReceipt = 1, 
-    DeleteReceipt = 2, 
+enum Action 
+{
+    OpenShift = 1, 
+    CloseShift = 2, 
     Exit = 3
 };
 
-void NewReceiptSwitch(std::unique_ptr<Receipt>& receipt) {
-    ItemAction itemAction;
+void ShiftSwitch(std::unique_ptr<Shift>& shift) 
+{
+    ShiftActions shiftActions;
     int input;
-    if (!receipt) 
+    if (!shift) 
     {
-        receipt = std::make_unique<Receipt>();
+        shift = std::make_unique<Shift>();
     }
     do {
-        std::cout << "1. Добавить позицию чека\n";
-        std::cout << "2. Удалить позицию чека\n"; 
-        std::cout << "3. Вывести все\n";
-        std::cout << "4. Вернуться к чекам\n";
+        std::cout << "1. Создать новый чек\n"; 
+        std::cout << "2. X-отчет\n";
+        std::cout << "3. Вернуться к смене\n";
         std::cout << "Выберите пункт: ";
         std::cin >> input;
-        itemAction = static_cast<ItemAction>(input);
-        switch (itemAction) {
-        case AddItem:
-            receipt->AddNewItem();
+        shiftActions = static_cast<ShiftActions>(input);
+        switch (shiftActions) {
+        case CreateReceipt:
+            shift->CreateNewReceipt();
             break;
-        case DeleteItem:
-            receipt->DeleteItem();
+        case PrintReport:
+            shift->PrintXReport();
             break;
-        case Show:
-            receipt->ShowAll();
-            break; 
-        case BackToReceipt:
+        case BackTo:
             std::cout << "\n";
             break;
         }
-    } while (itemAction != BackToReceipt);
+    } while (shiftActions != BackTo);
     return;
 }
 
 int main() {
     int input;
-    ReceiptAction receiptAction;
-    std::unique_ptr<Receipt> receipt;
+    Action action;
+    std::unique_ptr<Shift> shift;
     do {
-        std::cout << "1. Создать чек\n";
-        std::cout << "2. Удалить чек\n";
+        std::cout << "1. Открыть/Продолжить смену\n";
+        std::cout << "2. Закрыть смену\n";
         std::cout << "3. Выход\n";
         std::cout << "Выберите пункт: ";
         std::cin >> input;
-        receiptAction = static_cast<ReceiptAction>(input);
-        switch (receiptAction) {
-        case NewReceipt:
-            NewReceiptSwitch(receipt);
+        action = static_cast<Action>(input);
+        switch (action) {
+        case OpenShift:
+            ShiftSwitch(shift);
             break;
-        case DeleteReceipt:
-            if (receipt) 
+        case CloseShift:
+            if (shift) 
             {
-                receipt = nullptr;
+                shift = nullptr;
             } 
             else 
             {
-                std::cout << "Чек еще не создан.\n";
+                std::cout << "Смена еще не создана.\n";
             }
             break;
         case Exit:
             std::cout << "Работа завершена.\n";
             break;
         }
-    } while (receiptAction != Exit);
+    } while (action != Exit);
 
     return 0;
 }
