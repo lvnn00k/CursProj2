@@ -1,92 +1,63 @@
-package receipt;
+package shift;
 
 import java.util.Scanner;
 import java.lang.ref.WeakReference;
+import  receipt.*;
 
 class Main {
 
-    public enum ItemAction {
-        NewItem, DeleteItem, Show, BackToReceipt, LinksAndCopies;
+    public enum ShiftActions {
+        CreateReceipt, PrintReport, Back;
     }
 
-    public enum ReceiptAction {
-        NewReceipt, DeleteReceipt, Exit, WeakRef, FreeResources;
+    public enum Action {
+        OpenShift, CloseShift, Exit;
     }
 
-    private Receipt newReceiptSwitch(Receipt receipt) {
+    private Shift shiftSwitch(Shift shift) {
         Scanner scanner = new Scanner(System.in);
-        ItemAction itemAction;
-        if (receipt == null ) receipt = new Receipt();
+        ShiftActions shiftActions;
+        if (shift == null ) shift = new Shift();
         do {
-            System.out.print("1. Добавить позицию чека\n2. Удалить позицию чека\n3. Вывести все\n4. Вернуться к чекам\n5. Ссылки и копии \nВыберите пункт: ");
-            itemAction = ItemAction.values()[scanner.nextInt()-1];
-            switch(itemAction) {
-                case NewItem:
-                    receipt.addNewItem();
+            System.out.print("1. Создать новый чек\n2. X-отчет\n3. Вернуться к смене\nВыберите пункт: ");
+            shiftActions = ShiftActions.values()[scanner.nextInt()-1];
+            switch(shiftActions) {
+                case CreateReceipt:
+                    shift.createNewReceipt();
                     break;
-                case DeleteItem:
-                    receipt.deleteItem();
+                case PrintReport:
+                    shift.printXReport();
                     break;
-                case Show:
-                    receipt.showAll();
-                    break;
-                case BackToReceipt:
+                case Back:
                     System.out.print("\n");
                     break;
-                case LinksAndCopies:
-                    ReceiptItem receiptItem1 = new ReceiptItem(Products.array.get(0), 1);
-                    System.out.println("Объект 1 (до изменения объекта 2): \n" + receiptItem1);
-                    ReceiptItem receiptItem2 = receiptItem1;
-                    System.out.println("Новые данные объекта 2: ");
-                    int newData = scanner.nextInt();
-                    receiptItem2.newAmount(newData);
-                    System.out.println("Объект 1 (после изменения объекта 2): \n" + receiptItem1);
-                    break;
             }
-        } while (itemAction != ItemAction.BackToReceipt);
-        return receipt;
+        } while (shiftActions != ShiftActions.Back);
+        return shift;
     }
 
     public void main() {
-        ReceiptAction receiptAction = null;
-        Receipt receipt = null;
+        Action action = null;
+        Shift shift = null;
         Scanner scanner = new Scanner(System.in);
         do {
-            System.out.print("1. Создать чек\n2. Удалить чек\n3. Выход\n4. Слабая ссылка \n5. Освобождение ресурсов \nВыберите пункт: ");
+            System.out.print("1. Открыть/Продолжить смену\n2. Закрыть смену\n3. Выход\nВыберите пункт: ");
             try {
-                receiptAction = ReceiptAction.values()[scanner.nextInt()-1];
-                switch(receiptAction) {
-                    case NewReceipt:
-                        receipt = newReceiptSwitch(receipt);
+                action = Action.values()[scanner.nextInt()-1];
+                switch(action) {
+                    case OpenShift:
+                        shift = shiftSwitch(shift);
                         break;
-                    case DeleteReceipt:
-                        if (receipt != null) { 
-                            receipt.close(); 
-                            receipt = null;
+                    case CloseShift:
+                        if (shift != null) { 
+                            shift.close(); 
+                            shift = null;
                         } else { 
-                            System.out.println("Чек еще не создан."); 
+                            System.out.println("Смена еще не открыта."); 
                         }
                         break;
                     case Exit:
                         System.out.println("Работа завершена.");
-                        break;
-                    case WeakRef:
-                        Receipt temp = new Receipt();
-                        WeakReference<Receipt> watcher = new WeakReference<>(temp);
-                        System.out.println(watcher.get() != null);
-                        temp = null;
-                        System.out.println(watcher.get() != null); 
-                        System.out.println("Блок закончен. Начинается сборка мусора");
-                        System.gc();
-                        System.out.println(watcher.get() != null);
-                        System.out.println("Сборка мусора завершена");
-                        break;
-                    case FreeResources:
-                        try (Receipt rec = new Receipt()) {
-                            System.out.println(rec);
-                            System.out.println("Выход из блока");
-                        }
-                        System.out.println("Блок закончен");
                         break;
                 }
 
@@ -94,6 +65,6 @@ class Main {
                 System.out.println("Такого пункта нет.");
             } 
 
-        } while (receiptAction != ReceiptAction.Exit);
+        } while (action != Action.Exit);
     }
 }
